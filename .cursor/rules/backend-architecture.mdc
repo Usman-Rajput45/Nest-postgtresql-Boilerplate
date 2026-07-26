@@ -1,0 +1,106 @@
+---
+description: Backend architecture – thin controllers, services, Sequelize, JWT, validation, responses
+alwaysApply: true
+---
+
+# Cursor Rules – Backend Architecture
+
+## Core Principles
+- Controllers are thin
+- Services hold business logic
+- No function should exceed 25–30 lines if not then Functions should be small and composable
+- One responsibility per function
+- No hardcoded strings
+
+## Architecture Rules
+1. Use module-based structure
+2. Each module must contain:
+   - controller
+   - service
+   - routes
+   - dto
+   - types (if needed)
+3. No cross-module imports except via services
+
+## Controllers
+- Must NOT:
+  - Access database
+  - Contain logic
+  - Handle errors directly
+- Must:
+  - Accept/Read request
+  - Call service
+  - Call validation
+  - Return standardized response
+
+## Services
+- Contain all business logic
+- One function = one responsibility
+- Use helper/util functions
+- Functions must be small and composable
+- reusablility
+
+## Database
+- Sequelize with TypeScript
+- No raw queries in controllers
+- Models must be thin
+- Complex queries should go into repositories
+- Migrations & seeders required
+
+## Constants & Enums
+- No hardcoded strings
+- Messages → constants/messages.constant.ts
+- Status codes → constants/status-codes.constant.ts
+- Enums only for fixed sets (roles, token types)
+
+## Error Handling
+- Use centralized custom error classes
+- Throw errors from services
+- Global error middleware handles responses
+
+## Responses
+- Use centralized response helper
+- Unified API response format:
+  {
+    success: boolean,
+    message: string,
+    data?: any,
+    error?: any,
+    statusCode?: int
+  }
+
+## Validation
+- DTO-based validation
+- Middleware-based validation
+- No inline validation in controllers
+- Validate at request boundary
+- Never validate inside services
+
+## Authentication
+- JWT-based auth only
+- Tokens handled via utility functions
+- Middleware handles authorization
+
+## Code Style
+- TypeScript strict mode
+- Named exports only
+- No default exports except app/server
+- No magic numbers or strings
+- Async/await only
+- No nested callbacks
+- Meaningful naming
+- Avoid duplication
+- Do not use Fallbacks or Backward Compatability unless it is necessary
+- Confirm before adding Fallbacks or Backward Compatability
+
+## Forbidden
+- Fat controllers
+- God services
+- Inline SQL
+- try/catch in controllers
+- Hardcoded response messages
+
+## Scalability
+- Every module should be plug-and-play
+- Easy to add new modules without refactor
+- Clear separation of concerns
